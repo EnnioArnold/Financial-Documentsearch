@@ -54,6 +54,8 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     rag_top_k: int = 6
     rag_min_score: float = 0.0  # evidence gate, tuned in Phase 3
+    rag_min_coverage: float = 0.4  # evidence gate: share of question terms found in the top chunks
+    llm_max_retries: int = 2  # extra attempts on timeout / 429 / 5xx
 
     # observability
     log_raw_queries: bool = False

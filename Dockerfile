@@ -5,7 +5,7 @@ ENV PIP_NO_CACHE_DIR=1 PYTHONUNBUFFERED=1
 RUN pip install torch --extra-index-url https://download.pytorch.org/whl/cpu
 COPY pyproject.toml ./
 COPY src ./src
-RUN pip install .
+RUN pip install -e .
 COPY web ./web
 COPY observability ./observability
 COPY eval ./eval
