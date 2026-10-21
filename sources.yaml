@@ -1,0 +1,306 @@
+# FinSearch document sources.
+#
+# Layout: sources.<key> = one source family (key is stored as DocumentMeta.source).
+# Per document: url (https only, identity => doc_id = sha256(url)[:16]), title, doc_type
+# (speech|annual_report|market_comment|other), lang hint (de|en; the real language is
+# detected from the text), date (ISO, optional) and an optional max_pages cap (PDFs only)
+# because annual reports are huge.
+#
+# Every URL below was fetched on 2026-10-21 and returned the expected PDF/HTML.
+# robots.txt + terms were read per host (see robots_checked / license_note).
+#
+# Hosts checked but NOT used:
+#   - www.ecb.europa.eu: robots.txt allows it but sets Crawl-delay: 5 -> skipped to stay simple.
+#   - sec.gov / imf.org / bankofengland.co.uk: not needed, >= 3 families already covered.
+# Nothing here needed a login, a paywall bypass or a bot-challenge workaround.
+#
+# BIS: 2 speeches are listed as .pdf because the BIS HTML page only shows a short extract.
+# SNB speech pages are HTML shells; the speech text lives in the PDF linked from the page,
+# so the PDF is listed directly. Two SNB speeches (20260424 Schlegel, 20260826 Martin) are
+# listed in de AND en on purpose (translations => cross-lingual retrieval checks).
+sources:
+  snb:
+    name: Swiss National Bank (SNB)
+    homepage: https://www.snb.ch
+    robots_checked: '2026-10-21: https://www.snb.ch/robots.txt has only a Sitemap line, no Disallow rules for User-agent
+      *'
+    license_note: 'SNB copyright page (snb.ch/en/srv/disclaimer_copyright): information may be saved, translated
+      (cite source) and used for non-commercial purposes. Used here for a non-commercial portfolio project; always
+      cite SNB.'
+    documents:
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/communication/speeches/2025/ref_20251022_msl/publications0/ref_20251022_msl.de.pdf
+      title: 'Martin Schlegel: Wirtschaftslage und Geldpolitik der SNB'
+      doc_type: speech
+      lang: de
+      date: '2025-10-22'
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/communication/speeches/2025/ref_20251105_gpe/publications0/ref_20251105_gpe.de.pdf
+      title: 'Petra Tschudin: Aktuelle Herausforderungen der Geldpolitik'
+      doc_type: speech
+      lang: de
+      date: '2025-11-05'
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/communication/speeches/2025/ref_20251121_gpe/publications0/ref_20251121_gpe.de.pdf
+      title: 'Petra Tschudin: Geld- und währungspolitische Herausforderungen'
+      doc_type: speech
+      lang: de
+      date: '2025-11-21'
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/communication/speeches/2025/ref_20251122_msl/publications0/ref_20251122_msl.de.pdf
+      title: 'Martin Schlegel: Aktuelle Wirtschaftslage und Geldpolitik'
+      doc_type: speech
+      lang: de
+      date: '2025-11-22'
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/communication/speeches/2026/ref_20260129_msl/publications0/ref_20260129_msl.de.pdf
+      title: 'Martin Schlegel: Aktuelle Wirtschaftslage und Geldpolitik'
+      doc_type: speech
+      lang: de
+      date: '2026-01-29'
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/communication/speeches/2026/ref_20260224_msl/publications0/ref_20260224_msl.de.pdf
+      title: 'Martin Schlegel: Wirtschaftslage und Geldpolitik der SNB'
+      doc_type: speech
+      lang: de
+      date: '2026-02-24'
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/communication/speeches/2026/ref_20260324_gpe/publications0/ref_20260324_gpe.de.pdf
+      title: 'Petra Tschudin: Aktuelle Entwicklungen und Herausforderungen am Schweizer Franken-Kapitalmarkt'
+      doc_type: speech
+      lang: de
+      date: '2026-03-24'
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/communication/speeches/2026/ref_20260421_gpe/publications0/ref_20260421_gpe.de.pdf
+      title: 'Petra Tschudin: Wirtschaftsausblick und Geldpolitik'
+      doc_type: speech
+      lang: de
+      date: '2026-04-21'
+    - url: https://www.snb.ch/public/asset/en/www-snb-ch/publications/communication/speeches/2025/ref_20250930_gpe/publications0_en/ref_20250930_gpe.en.pdf
+      title: 'Petra Tschudin: Current economic situation and monetary policy'
+      doc_type: speech
+      lang: en
+      date: '2025-09-30'
+    - url: https://www.snb.ch/public/asset/en/www-snb-ch/publications/communication/speeches/2025/ref_20251002_msl/publications0_en/ref_20251002_msl.en.pdf
+      title: 'Martin Schlegel: Ninth Karl Brunner Distinguished Lecture - Introduction of John H. Cochrane'
+      doc_type: speech
+      lang: en
+      date: '2025-10-02'
+    - url: https://www.snb.ch/public/asset/en/www-snb-ch/publications/communication/speeches/2025/ref_20251024_gpe/publications0_en/ref_20251024_gpe.en.pdf
+      title: 'Petra Tschudin: Monetary policy implementation at the SNB'
+      doc_type: speech
+      lang: en
+      date: '2025-10-24'
+    - url: https://www.snb.ch/public/asset/en/www-snb-ch/publications/communication/speeches/2025/ref_20251104_msl/publications0_en/ref_20251104_msl.en.pdf
+      title: 'Martin Schlegel: The Swiss National Bank - mandate, challenges and approach to CBDC'
+      doc_type: speech
+      lang: en
+      date: '2025-11-04'
+    - url: https://www.snb.ch/public/asset/en/www-snb-ch/publications/communication/speeches/2026/ref_20260211_anmar/publications0_en/ref_20260211_anmar.en.pdf
+      title: 'Antoine Martin: The Credit Suisse crisis and its effect on the Swiss credit market'
+      doc_type: speech
+      lang: en
+      date: '2026-02-11'
+    - url: https://www.snb.ch/public/asset/en/www-snb-ch/publications/communication/speeches/2026/ref_20260415_msl/publications0_en/ref_20260415_msl.en.pdf
+      title: 'Martin Schlegel: Central banking for open economies in a changed world'
+      doc_type: speech
+      lang: en
+      date: '2026-04-15'
+    - url: https://www.snb.ch/public/asset/en/www-snb-ch/publications/communication/speeches/2026/ref_20260522_msl/publications0_en/ref_20260522_msl.en.pdf
+      title: 'Martin Schlegel: The Swiss National Bank - mandate and challenges'
+      doc_type: speech
+      lang: en
+      date: '2026-05-22'
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/communication/speeches/2026/ref_20260424_msl/publications0/ref_20260424_msl.de.pdf
+      title: 'Martin Schlegel: Erläuterungen zur Schweizer Geldpolitik'
+      doc_type: speech
+      lang: de
+      date: '2026-04-24'
+    - url: https://www.snb.ch/public/asset/en/www-snb-ch/publications/communication/speeches/2026/ref_20260424_msl/publications0_en/ref_20260424_msl.en.pdf
+      title: 'Martin Schlegel: Comments on Swiss monetary policy'
+      doc_type: speech
+      lang: en
+      date: '2026-04-24'
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/communication/speeches/2026/ref_20260826_anmar/publications0/ref_20260826_anmar.de.pdf
+      title: 'Antoine Martin: Geldpolitik und Finanzstabilität bei der SNB: die Rolle makroprudenzieller Instrumente'
+      doc_type: speech
+      lang: de
+      date: '2026-08-26'
+    - url: https://www.snb.ch/public/asset/en/www-snb-ch/publications/communication/speeches/2026/ref_20260826_anmar/publications0_en/ref_20260826_anmar.en.pdf
+      title: 'Antoine Martin: Monetary policy and financial stability at the SNB: the role of macroprudential tools'
+      doc_type: speech
+      lang: en
+      date: '2026-08-26'
+    - url: https://www.snb.ch/public/asset/de/www-snb-ch/publications/financial-stability-report/2026/stabrep_2026/publications0/stabrep_2026.de.pdf
+      title: Bericht zur Finanzstabilität 2026
+      doc_type: other
+      lang: de
+      max_pages: 40
+    - url: https://www.snb.ch/public/asset/en/www-snb-ch/publications/financial-stability-report/2026/stabrep_2026/publications0_en/stabrep_2026.en.pdf
+      title: Financial Stability Report 2026
+      doc_type: other
+      lang: en
+      max_pages: 40
+  fed:
+    name: US Federal Reserve Board (speeches)
+    homepage: https://www.federalreserve.gov
+    robots_checked: '2026-10-21: https://www.federalreserve.gov/robots.txt returns 404 (no restrictions published)'
+    license_note: 'federalreserve.gov/disclaimer.htm: unless otherwise indicated the Board''s website content is
+      in the public domain; cite the Board as source.'
+    documents:
+    - url: https://www.federalreserve.gov/newsevents/speech/bowman20261014a.htm
+      title: Bowman, Supervisory Modernization After Silicon Valley Bank
+      doc_type: speech
+      lang: en
+      date: '2026-10-14'
+    - url: https://www.federalreserve.gov/newsevents/speech/waller20261008a.htm
+      title: Waller, The Signaling Value of the Summary of Economic Projections
+      doc_type: speech
+      lang: en
+      date: '2026-10-08'
+    - url: https://www.federalreserve.gov/newsevents/speech/bowman20261006a.htm
+      title: Bowman, Modernizing the Regulatory and Supervisory Landscape
+      doc_type: speech
+      lang: en
+      date: '2026-10-06'
+    - url: https://www.federalreserve.gov/newsevents/speech/bowman20261001a.htm
+      title: 'Bowman, Modernizing Financial Regulation: Initial Observations from eSLR'
+      doc_type: speech
+      lang: en
+      date: '2026-10-01'
+    - url: https://www.federalreserve.gov/newsevents/speech/jefferson20261001a.htm
+      title: Jefferson, The U.S. Economy and Monetary Policy
+      doc_type: speech
+      lang: en
+      date: '2026-10-01'
+    - url: https://www.federalreserve.gov/newsevents/speech/waller20261001a.htm
+      title: 'Waller, The Data Version of Godzilla versus Kong: FRED Takes on AI'
+      doc_type: speech
+      lang: en
+      date: '2026-10-01'
+    - url: https://www.federalreserve.gov/newsevents/speech/cook20260930a.htm
+      title: Cook, The Dual Mandate in Rural America
+      doc_type: speech
+      lang: en
+      date: '2026-09-30'
+    - url: https://www.federalreserve.gov/newsevents/speech/waller20260928a.htm
+      title: Waller, Payments in the Age of AI Agents
+      doc_type: speech
+      lang: en
+      date: '2026-09-28'
+    - url: https://www.federalreserve.gov/newsevents/speech/barr20260929a.htm
+      title: Barr, Economic Conditions and Monetary Policy
+      doc_type: speech
+      lang: en
+      date: '2026-09-29'
+    - url: https://www.federalreserve.gov/newsevents/speech/cook20260928a.htm
+      title: Cook, An Update on AI and the Economy
+      doc_type: speech
+      lang: en
+      date: '2026-09-28'
+  bis:
+    name: Bank for International Settlements (BIS)
+    homepage: https://www.bis.org
+    robots_checked: '2026-10-21: https://www.bis.org/robots.txt disallows only technical paths (/core/, /admin/,
+      /search/, /sites/default/files/ ...); /publications/ and /speeches/ are allowed'
+    license_note: 'bis.org/terms_conditions.htm: BIS material may be downloaded and redistributed for non-commercial
+      purposes and limited extracts reproduced with BIS cited as source. Central bankers'' speeches are (c) of their
+      authors/institutions, republished by BIS.'
+    documents:
+    - url: https://www.bis.org/publications/aer-2026_0.pdf
+      title: BIS Annual Economic Report 2026
+      doc_type: annual_report
+      lang: en
+      date: '2026-06-28'
+      max_pages: 40
+    - url: https://www.bis.org/publications/aer-2025.pdf
+      title: BIS Annual Economic Report 2025
+      doc_type: annual_report
+      lang: en
+      date: '2025-06-29'
+      max_pages: 40
+    - url: https://www.bis.org/publications/qr-202603.pdf
+      title: BIS Quarterly Review, March 2026
+      doc_type: market_comment
+      lang: en
+      date: '2026-03-16'
+      max_pages: 40
+    - url: https://www.bis.org/publications/qr-202512.pdf
+      title: BIS Quarterly Review, December 2025
+      doc_type: market_comment
+      lang: en
+      date: '2025-12-08'
+      max_pages: 40
+    - url: https://www.bis.org/speeches/20261020-celebrating-30-years-capital-markets-development-uganda
+      title: Celebrating 30 years of capital markets development in Uganda
+      doc_type: speech
+      lang: en
+      date: '2026-10-20'
+    - url: https://www.bis.org/speeches/20261020-central-bank-trust-daft-punk.pdf
+      title: The Central Bank. Trust. Daft Punk.
+      doc_type: speech
+      lang: en
+      date: '2026-10-20'
+    - url: https://www.bis.org/speeches/20261016-evolution-bank-governance-eu
+      title: The evolution of bank governance in the EU
+      doc_type: speech
+      lang: en
+      date: '2026-10-16'
+    - url: https://www.bis.org/speeches/20261020-reimagining-assurance-harnessing-intelligence-resilience-and-integrity
+      title: Reimagining assurance - harnessing intelligence, resilience and integrity
+      doc_type: speech
+      lang: en
+      date: '2026-10-20'
+    - url: https://www.bis.org/speeches/20261020-economic-activity-prices-and-monetary-policy-japan.pdf
+      title: Economic activity, prices, and monetary policy in Japan
+      doc_type: speech
+      lang: en
+      date: '2026-10-20'
+  finma:
+    name: Swiss Financial Market Supervisory Authority (FINMA)
+    homepage: https://www.finma.ch
+    robots_checked: '2026-10-21: finma.ch/robots.txt and report.finma.ch/robots.txt allow / (disallow only /typo3/,
+      /sitecore/media library/, /suche/ etc.); the PDFs are not under those paths'
+    license_note: 'finma.ch/en/terms-and-conditions/: content is publicly accessible but all rights reserved; reproduction
+      needs written consent. Therefore ONLY used locally for indexing/search (raw files are gitignored, never redistributed);
+      results show short snippets with citation.'
+    documents:
+    - url: https://report.finma.ch/fileadmin/user_upload/FINMA-Jahresbericht_2025_en.pdf
+      title: FINMA Annual Report 2025
+      doc_type: annual_report
+      lang: en
+      date: '2026-04-21'
+      max_pages: 40
+    - url: https://report.finma.ch/fileadmin/user_upload/FINMA-Jahresbericht_2025_de.pdf
+      title: FINMA Jahresbericht 2025
+      doc_type: annual_report
+      lang: de
+      date: '2026-04-21'
+      max_pages: 40
+    - url: https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/finma-publikationen/risikomonitor/20251117-finma-risikomonitor-2025.pdf?sc_lang=en&hash=6CB0C57B5333208BA29F26542B3B76B8
+      title: FINMA Risk Monitor 2025
+      doc_type: other
+      lang: en
+      date: '2025-11-17'
+    - url: https://www.finma.ch/de/~/media/finma/dokumente/dokumentencenter/myfinma/finma-publikationen/risikomonitor/20251117-finma-risikomonitor-2025.pdf?sc_lang=de&hash=1E5053B36F8FDF57FB9A8D3830D0B34A
+      title: FINMA Risikomonitor 2025
+      doc_type: other
+      lang: de
+      date: '2025-11-17'
+  zkb:
+    name: Zuercher Kantonalbank (ZKB)
+    homepage: https://www.zkb.ch
+    robots_checked: '2026-10-21: https://www.zkb.ch/robots.txt is ''User-agent: *  Allow: /'''
+    license_note: Publicly accessible investor-relations reports (annual report 2025); no explicit reuse licence
+      found on zkb.ch/en/legal. Used locally for indexing only (raw files gitignored); always cite ZKB.
+    documents:
+    - url: https://www.zkb.ch/media/zkb/dokumente/investor-relations/zkb_geschaeftsbericht_2025_lagebericht_de.pdf
+      title: Zuercher Kantonalbank Geschaeftsbericht 2025 - Lagebericht
+      doc_type: annual_report
+      lang: de
+      date: '2026-03-25'
+      max_pages: 40
+    - url: https://www.zkb.ch/media/zkb/dokumente/investor-relations/zkb_annual_report_2025_management_report_en.pdf
+      title: Zurich Cantonal Bank Annual Report 2025 - Management Report
+      doc_type: annual_report
+      lang: en
+      date: '2026-03-25'
+      max_pages: 40
+    - url: https://www.zkb.ch/media/zkb/dokumente/investor-relations/zkb_geschaeftsbericht_2025_finanzbericht_de.pdf
+      title: Zuercher Kantonalbank Geschaeftsbericht 2025 - Finanzbericht
+      doc_type: annual_report
+      lang: de
+      date: '2026-03-25'
+      max_pages: 40
