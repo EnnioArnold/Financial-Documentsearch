@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_form_parts.html" import methods, filters, example_list with context %}
+{% block title %}Frage stellen{% endblock %}
+{% block content %}
+<h1>Frage stellen</h1>
+<p class="lede">Die Antwort stammt ausschliesslich aus den gefundenen Passagen. Jede Aussage trägt eine Quellennummer, die Sie anklicken können.</p>
+
+<form id="ask-form" class="panel" action="/frage" method="get">
+  <div class="field">
+    <label for="q">Frage</label>
+    <div class="input-row">
+      <input id="q" name="q" type="text" required maxlength="500" autocomplete="off"
+             placeholder="z. B. Welche Rolle spielt der Franken für die Geldpolitik?">
+      <button type="submit" class="btn btn-primary">Antwort suchen</button>
+    </div>
+  </div>
+  {{ methods() }}
+  {{ filters(k_default=6) }}
+</form>
+
+<section aria-labelledby="answer-title" class="results-section">
+  <h2 id="answer-title" class="visually-hidden">Antwort</h2>
+  <div id="status" class="status" role="status" aria-live="polite"></div>
+  <div id="error" class="alert" role="alert" hidden></div>
+  <div id="answer" class="answer-panel" hidden></div>
+  <div id="sources-wrap" hidden>
+    <h3>Quellen</h3>
+    <ol id="sources" class="results sources"></ol>
+  </div>
+</section>
+
+{{ example_list() }}
+{% endblock %}

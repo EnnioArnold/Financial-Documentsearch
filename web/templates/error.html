@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Fehler {{ status }}{% endblock %}
+{% block content %}
+<h1>Fehler {{ status }}</h1>
+<div class="alert"><p>{{ message }}</p>{% if hint %}<p class="hint">{{ hint }}</p>{% endif %}</div>
+<p><a class="btn" href="/">Zur Suche</a></p>
+{% endblock %}

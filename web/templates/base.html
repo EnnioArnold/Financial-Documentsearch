@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>{% block title %}Suche{% endblock %} · FinSearch</title>
+  <meta name="description" content="Hybride Suche und belegte Antworten über öffentliche Finanzdokumente (SNB, Fed und weitere).">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body data-page="{{ active }}">
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="/" aria-label="FinSearch – Startseite">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">FinSearch</span>
+      </a>
+      <nav aria-label="Hauptnavigation">
+        <ul class="nav">
+          {% set pages = [("search", "/", "Suche"), ("ask", "/frage", "Frage stellen"), ("compare", "/vergleich", "Vergleich")] %}
+          {% for key, href, label in pages %}
+          <li><a href="{{ href }}"{% if key == active %} aria-current="page"{% endif %}>{{ label }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div id="system-banner" class="banner" role="status" hidden></div>
+  </div>
+
+  <main id="main" class="wrap">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p id="corpus-info" class="muted"></p>
+      <p class="muted">Lokale Demo – Sicherheit von Elasticsearch ist deaktiviert, nicht für Produktion.</p>
+      <p class="muted">Nur öffentliche Dokumente. Antworten sind Auszüge aus den Quellen und keine Anlageberatung.</p>
+    </div>
+  </footer>
+</body>
+</html>

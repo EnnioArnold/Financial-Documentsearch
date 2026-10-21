@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_form_parts.html" import filters, example_list with context %}
+{% block title %}Vergleich{% endblock %}
+{% block content %}
+<h1>Methoden im Vergleich</h1>
+<p class="lede">Dieselbe Anfrage, drei Verfahren: Stichwortsuche (BM25), Bedeutungssuche (kNN) und deren Fusion (Hybrid). Treffer, die in mehreren Listen vorkommen, sind markiert.</p>
+
+<form id="compare-form" class="panel" action="/vergleich" method="get" role="search">
+  <div class="field">
+    <label for="q">Suchanfrage</label>
+    <div class="input-row">
+      <input id="q" name="q" type="search" required maxlength="500" autocomplete="off"
+             placeholder="z. B. Teuerung und Zinsen">
+      <button type="submit" class="btn btn-primary">Vergleichen</button>
+    </div>
+  </div>
+  {{ filters() }}
+</form>
+
+<section aria-labelledby="compare-title" class="results-section">
+  <h2 id="compare-title" class="visually-hidden">Vergleich der Ergebnisse</h2>
+  <div id="status" class="status" role="status" aria-live="polite"></div>
+  <div id="error" class="alert" role="alert" hidden></div>
+  <p id="overlap" class="overlap" hidden></p>
+  <div id="columns" class="columns" hidden></div>
+</section>
+
+{{ example_list() }}
+{% endblock %}

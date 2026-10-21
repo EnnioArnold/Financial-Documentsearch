@@ -1,4 +1,4 @@
-.PHONY: setup up down ingest test test-int test-all eval kibana-setup lint fmt typecheck cov run
+.PHONY: setup up down ingest test test-int test-e2e test-all eval kibana-setup lint fmt typecheck cov run
 PY := .venv/bin/python
 export PATH := $(CURDIR)/.venv/bin:$(PATH)
 
@@ -22,7 +22,10 @@ test:  ## unit tests, no Elasticsearch needed
 test-int:  ## integration tests against the docker ES
 	$(PY) -m pytest -m integration -o addopts=""
 
-test-all: test test-int
+test-e2e:  ## browser smoke test (Playwright chromium)
+	$(PY) -m pytest -m e2e -o addopts=""
+
+test-all: test test-int test-e2e
 
 cov:  ## coverage of core logic
 	$(PY) -m pytest --cov --cov-report=term-missing

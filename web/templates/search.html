@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_form_parts.html" import methods, filters, example_list with context %}
+{% block title %}Suche{% endblock %}
+{% block content %}
+<h1>Dokumente durchsuchen</h1>
+<p class="lede">Stichwort- und Bedeutungssuche über Reden, Berichte und Kommentare von SNB, Fed und weiteren Quellen.</p>
+
+<form id="search-form" class="panel" action="/" method="get" role="search">
+  <div class="field">
+    <label for="q">Suchanfrage</label>
+    <div class="input-row">
+      <input id="q" name="q" type="search" required maxlength="500" autocomplete="off"
+             placeholder="z. B. Leitzins Inflation">
+      <button type="submit" class="btn btn-primary">Suchen</button>
+    </div>
+  </div>
+  {{ methods() }}
+  {{ filters() }}
+</form>
+
+<section aria-labelledby="results-title" class="results-section">
+  <h2 id="results-title" class="visually-hidden">Suchergebnisse</h2>
+  <div id="status" class="status" role="status" aria-live="polite"></div>
+  <div id="error" class="alert" role="alert" hidden></div>
+  <ol id="results" class="results"></ol>
+</section>
+
+{{ example_list() }}
+{% endblock %}

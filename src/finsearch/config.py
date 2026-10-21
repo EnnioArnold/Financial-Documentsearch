@@ -60,6 +60,13 @@ class Settings(BaseSettings):
     # observability
     log_raw_queries: bool = False
 
+    # api
+    # comma-separated allowed origins; a wildcard is ignored
+    api_cors_origins: str = "http://127.0.0.1:8000,http://localhost:8000"
+    # per client IP and window on /search, /ask, /compare (0 = off)
+    api_rate_limit: int = 60
+    api_rate_window_s: int = 60
+
     @property
     def index_name(self) -> str:
         return f"{self.es_index_alias}-{self.es_index_version}"

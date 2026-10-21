@@ -49,8 +49,8 @@ check_untyped_defs = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["integration: needs Elasticsearch (docker compose up)", "llm: needs a real LLM key"]
-addopts = "-m 'not integration and not llm'"
+markers = ["integration: needs Elasticsearch (docker compose up)", "llm: needs a real LLM key", "e2e: browser smoke test (Playwright chromium + Elasticsearch)"]
+addopts = "-m 'not integration and not llm and not e2e'"
 
 [tool.coverage.run]
 source = ["src/finsearch"]
