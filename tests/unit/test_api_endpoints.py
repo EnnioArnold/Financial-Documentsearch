@@ -295,3 +295,12 @@ def test_jinja_autoescape_is_on(env):
     jinja = env.app.state.templates.env
     assert jinja.autoescape("page.html")
     assert jinja.from_string("{{ x }}").render(x=XSS) == "&lt;script&gt;alert(1)&lt;/script&gt;"
+
+
+def test_runtime_stats_key_count_is_bounded():
+    from finsearch.api.deps import MAX_STAT_KEYS, RuntimeStats
+
+    stats = RuntimeStats()
+    for i in range(MAX_STAT_KEYS * 3):
+        stats.record(f"/probe-{i}", "GET", 404, 1.0)
+    assert len(stats.snapshot()["endpoints"]) <= MAX_STAT_KEYS + 1

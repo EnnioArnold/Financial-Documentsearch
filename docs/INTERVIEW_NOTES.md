@@ -1,0 +1,17 @@
+# Interview-Notizen (15 Fragen)
+
+1. **Warum Hybrid statt nur Vektorsuche?** BM25 trifft exakte Begriffe, Zahlen und Namen («72,5 %», «PostFinance»), Vektoren treffen Paraphrasen. Ehrlich: auf meinem Golden Set war BM25 allein besser als Hybrid (R@5 0.83 vs. 0.77), weil die Fragen formulierungsnah sind und e5-small schwächer ist; bei Paraphrasen führte kNN. Mit Reranker war Hybrid am besten (0.86).
+2. **Wie funktioniert RRF?** Pro Liste `1/(k+Rang)`, summiert über die Listen, k=60. Nur Ränge zählen, daher keine Score-Normalisierung (BM25- und Cosine-Scores sind nicht vergleichbar). Tie-Break: Score, bester Einzelrang, `chunk_id`.
+3. **Warum RRF im Client?** Testbar mit handgerechneten Beispielen, lizenzunabhängig, deterministisch. Kosten: zwei ES-Roundtrips.
+4. **Warum dieses Chunking?** ~400 geschätzte Tokens (e5 schneidet bei 512 ab), 12 % Überlappung, satzbewusst, Seitenzahl mitgeführt für Zitate. Die Token-Schätzung ist `Zeichen/4` – `Wörter×1.4` war für Deutsch falsch (gemessen mit dem echten Tokenizer).
+5. **Wie vermeidest du Halluzinationen?** Evidence-Gate vor dem LLM (ADR-007), Prompt nur mit nummerierten Quellen, Zitat-Validierung (ungültige `[n]` werden verworfen, Sätze ohne Beleg markiert), Extractive-Standard ohne generierten Text. Gemessen: 8/8 unbeantwortbare abgelehnt, 40/43 beantwortbar – aber auf demselben Set getunt.
+6. **Prompt Injection?** Chunk-Text wird HTML-escaped in `<source>`-Blöcke gesetzt, kann Tags nicht schliessen/fälschen; System-Prompt deklariert Inhalt als Daten. Unit-Test mit «Ignoriere alle Anweisungen».
+7. **Warum Elasticsearch?** Reife BM25-Analyzer (german/english), kNN, Filter, Highlighting, Kibana für Observability in einem System.
+8. **Warum `multilingual-e5-small`?** 384 d, mehrsprachig, CPU-tauglich. Schwäche: Cross-Language-Paraphrasen. Alternative: bge-m3 (1024 d, langsamer).
+9. **Wie skaliert das?** 1117 Chunks sind klein. Skalierung: mehrere Shards/Replikas, Embeddings batchen/GPU, Quantisierung (bbq_hnsw), Reranker nur auf Top-30, Caching. Query-Logging asynchron.
+10. **Was würdest du in Produktion anders machen?** Security/TLS/Auth für ES, Secrets-Management, Lockfile + Image-Pinning, CI mit Integrationstests, Re-Index mit Alias-Switch inkl. Löschen veralteter Chunks, Monitoring/Alerts, unabhängiges Golden Set.
+11. **Datenschutz/FINMA bei Bankdokumenten?** Hier nur öffentliche Dokumente. Intern: Datenklassifizierung, lokale Modelle (Ollama) statt Cloud-LLM, kein Raw-Query-Logging (nur Hash), Zugriffskontrolle auf Dokumentebene, Auslagerungsregeln (FINMA-RS Outsourcing) bei Cloud-Diensten.
+12. **Wie hast du evaluiert, und was sind die Grenzen?** Recall@k, MRR, nDCG, Bootstrap-CIs. 43 Fragen, aus Chunk-Zitaten abgeleitet (LLM-vorgeschlagen, mechanisch geprüft) → formulierungsnah, BM25-freundlich, breite CIs.
+13. **Wie testest du?** 401 Unit-Tests ohne ES, 85 Integrationstests gegen Docker-ES, 7 Browser-Tests; Kernlogik (Chunking, RRF, Prompt, Zitate) 100 % Coverage, gesamt 96 %.
+14. **Wie machst du Observability?** Middleware schreibt pro Request ein JSON-Dokument (Latenzanteile, Methode, Trefferzahl, Fehler) nach `finsearch-queries`; Kibana zeigt p50/p95, Fehlerrate, Top-Queries, Null-Treffer.
+15. **Was war ein Fehler, den du gefunden hast?** Das erste Evidence-Gate liess 7 von 8 unbeantwortbaren Fragen durch – der unabhängige Review hat es gefunden, ich habe es gemessen und neu gebaut (ADR-007). Ebenfalls: falsche Token-Schätzung für Deutsch.

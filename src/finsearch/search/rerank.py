@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
+import threading
 from typing import Any
 
 from finsearch.config import Settings, get_settings
@@ -21,8 +22,13 @@ class CrossEncoderReranker:
         self.model_name = model_name or get_settings().reranker_model
         self.max_length = max_length
         self._model: Any = None
+        self._lock = threading.Lock()
 
     def _load(self) -> Any:
+        with self._lock:  # parallel first requests must not load the model several times
+            return self._load_locked()
+
+    def _load_locked(self) -> Any:
         if self._model is None:
             from sentence_transformers import CrossEncoder
 

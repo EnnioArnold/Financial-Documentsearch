@@ -91,10 +91,37 @@ def test_extractive_without_matching_sentence_is_not_found():
     assert not a.found and a.answer == NOT_FOUND_TEXT
 
 
-def test_min_score_filters_hits():
-    searcher = FakeSearcher(CHUNKS_DE, score=0.1)
-    a = answer_question(Q_DE, searcher, EXTRACTIVE, settings=settings(rag_min_score=0.5))
-    assert not a.found and a.used_chunks == []
+def test_gate_uses_best_chunk_not_union():
+    # regression for review H1: generic terms spread over several chunks must not count
+    chunks = [make_chunk(1, "Die Zinsen stiegen."), make_chunk(2, "Der Dividende wurde erhöht.")]
+    q = "Zinsen Dividende Singapur Geldautomaten"
+    assert evidence_coverage(q, chunks) <= 0.25
+    assert not has_evidence(q, chunks, 0.7)
+
+
+def test_gate_bm25_alternative_is_lazy():
+    chunks = [make_chunk(1, "Völlig anderer Inhalt über Wetter.")]
+    calls: list[int] = []
+
+    def top() -> float:
+        calls.append(1)
+        return 30.0
+
+    assert has_evidence("Wie definiert die SNB Preisstabilität?", chunks, 0.7, top, 26.0)
+    assert calls == [1]
+    assert not has_evidence(
+        "Wie definiert die SNB Preisstabilität?", chunks, 0.7, lambda: 5.0, 26.0
+    )
+    assert has_evidence(
+        "Preisstabilität", [make_chunk(1, "Preisstabilität ist das Ziel.")], 0.7, top, 26.0
+    )
+    assert calls == [1]  # not called when coverage already suffices
+
+
+def test_single_english_word_question_is_not_stemmed_as_german():
+    # regression for review M1: 'inflation' was stemmed German ('inflatio') and rejected
+    chunk = make_chunk(1, "Inflation has eased considerably in recent months.", lang="en")
+    assert evidence_coverage("inflation", [chunk]) == 1.0
 
 
 def test_k_and_method_are_passed_to_searcher():

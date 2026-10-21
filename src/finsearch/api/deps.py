@@ -154,6 +154,9 @@ def percentile(sorted_values: list[float], p: float) -> float:
     return sorted_values[rank - 1]
 
 
+MAX_STAT_KEYS = 50
+
+
 class RuntimeStats:
     """Thread-safe request counters since process start, keyed by (endpoint, method)."""
 
@@ -164,7 +167,10 @@ class RuntimeStats:
 
     def record(self, endpoint: str, method: str, status: int, duration_ms: float) -> None:
         with self._lock:
-            c = self._counters[(endpoint, method)]
+            key = (endpoint, method)
+            if key not in self._counters and len(self._counters) >= MAX_STAT_KEYS:
+                key = ("other", method)  # scanners hitting random paths must not grow memory
+            c = self._counters[key]
             c.count += 1
             c.errors += status >= 500
             c.durations_ms.append(duration_ms)

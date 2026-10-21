@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import time
+from collections.abc import Callable
 
 from finsearch.config import Settings, get_settings
 from finsearch.contracts import (
@@ -30,32 +31,46 @@ NOTE_NO_EVIDENCE = "Keine ausreichende Evidenz"
 
 
 def evidence_coverage(question: str, chunks: list[Chunk]) -> float:
-    """Share (0..1) of the question's content terms that occur anywhere in `chunks`.
+    """Best single-chunk share (0..1) of the question's content terms found in a chunk.
 
-    Terms are stopword-free and lightly stemmed (see text.py). The share is taken over the
-    distinct terms of the question; 0.0 if the question has no content terms or no chunks.
+    The question is stemmed in the language of each chunk, so a one-word English question is
+    not stemmed as German. Taking the best chunk (not the union of all chunks) stops generic
+    terms spread over several chunks from counting as evidence. 0.0 without terms or chunks.
     """
-    terms = set(content_terms(question))
-    if not terms or not chunks:
-        return 0.0
-    chunk_terms: set[str] = set()
+    best = 0.0
     for c in chunks:
-        chunk_terms.update(content_terms(f"{c.title} {c.text}", detect_lang(c.text)))
-    return len(terms & chunk_terms) / len(terms)
+        lang = detect_lang(c.text)
+        terms = set(content_terms(question, lang))
+        if not terms:
+            continue
+        chunk_terms = set(content_terms(f"{c.title} {c.text}", lang))
+        best = max(best, len(terms & chunk_terms) / len(terms))
+    return best
 
 
-def has_evidence(question: str, chunks: list[Chunk], min_coverage: float | None = None) -> bool:
-    """Evidence gate: any chunks at all, and lexical coverage >= `min_coverage`.
+def has_evidence(
+    question: str,
+    chunks: list[Chunk],
+    min_coverage: float | None = None,
+    bm25_top: Callable[[], float] | None = None,
+    min_bm25: float | None = None,
+) -> bool:
+    """Evidence gate: chunks exist and (lexical coverage is high OR the BM25 top score is high).
 
-    The threshold is the single setting `rag_min_coverage` (0 switches the lexical check off).
-    Known limit: a German question about an English chunk matches only on shared terms
-    (names, numbers), so cross-language questions may be rejected; tune on the golden set.
+    Thresholds (`rag_min_coverage`, `rag_min_bm25`) were tuned on the golden set, see
+    docs/DECISIONS.md ADR-007. `bm25_top` is evaluated lazily, only if coverage is too low.
+    min_coverage <= 0 switches the gate off.
     """
     if not chunks:
         return False
+    settings = get_settings()
     if min_coverage is None:
-        min_coverage = get_settings().rag_min_coverage
-    return min_coverage <= 0 or evidence_coverage(question, chunks) >= min_coverage
+        min_coverage = settings.rag_min_coverage
+    if min_coverage <= 0 or evidence_coverage(question, chunks) >= min_coverage:
+        return True
+    if bm25_top is None:
+        return False
+    return bm25_top() >= (settings.rag_min_bm25 if min_bm25 is None else min_bm25)
 
 
 def _not_found(
@@ -100,10 +115,20 @@ def answer_question(
     settings = settings or get_settings()
     t0 = time.perf_counter()
     result = searcher.search(question, method=method, k=k or settings.rag_top_k, filters=filters)
-    chunks = [h.chunk for h in result.hits if h.score >= settings.rag_min_score]
+    chunks = [h.chunk for h in result.hits]
     timings = {"retrieve": (time.perf_counter() - t0) * 1000, "llm": 0.0}
 
-    if not has_evidence(question, chunks, settings.rag_min_coverage):
+    def bm25_top() -> float:
+        hits = (
+            result.hits
+            if method == "bm25"
+            else searcher.search(question, method="bm25", k=1, filters=filters).hits
+        )
+        return hits[0].score if hits else 0.0
+
+    if not has_evidence(
+        question, chunks, settings.rag_min_coverage, bm25_top, settings.rag_min_bm25
+    ):
         return _not_found(chunks, NOTE_NO_EVIDENCE, llm.name, timings)
     if llm.name == "extractive":
         return _extractive(question, chunks, "", timings)

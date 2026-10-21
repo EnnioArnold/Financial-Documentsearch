@@ -53,8 +53,8 @@ class Settings(BaseSettings):
     groq_api_key: str = ""
     anthropic_api_key: str = ""
     rag_top_k: int = 6
-    rag_min_score: float = 0.0  # evidence gate, tuned in Phase 3
-    rag_min_coverage: float = 0.4  # evidence gate: share of question terms found in the top chunks
+    rag_min_coverage: float = 0.7  # evidence gate: best-chunk share of question terms (ADR-007)
+    rag_min_bm25: float = 26.0  # evidence gate: alternative, BM25 top-1 score (ADR-007)
     llm_max_retries: int = 2  # extra attempts on timeout / 429 / 5xx
 
     # observability
