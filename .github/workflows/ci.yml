@@ -1,0 +1,17 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv venv --python 3.13 && uv pip install torch --extra-index-url https://download.pytorch.org/whl/cpu && uv pip install -e ".[dev]"
+      - run: .venv/bin/ruff check . && .venv/bin/ruff format --check .
+      - run: .venv/bin/mypy src
+      - run: .venv/bin/pytest --cov --cov-fail-under=80
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t finsearch:ci .
