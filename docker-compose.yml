@@ -33,7 +33,7 @@ services:
     env_file: [{path: .env, required: false}]
     environment:
       - ES_URL=http://elasticsearch:9200
-    ports: ["127.0.0.1:8000:8000"]
+    ports: ["127.0.0.1:7999:8000"]
     volumes: ["hfcache:/root/.cache/huggingface"]
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request as u; u.urlopen('http://localhost:8000/health')\""]
